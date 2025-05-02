@@ -37,17 +37,34 @@
         .risk-block ul li {
             margin-bottom: 5px;
         }
+        table {
+            background-color: #fff;
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 30px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        table th, table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        table th {
+            background-color: #f0f0f0;
+        }
     </style>
 </head>
 <body>
 
 <h1>PREVENT Risk Calculator</h1>
 
-<a class="article-link" href="https://ktantod.github.io/nhc/jama_larkin_2023_mn_230106_1705010847.6617.pdf" target="_blank">
+<a class="article-link" href="https://github.com/ktantod/nhc/blob/main/jama_larkin_2023_mn_230106_1705010847.6617.pdf" target="_blank">
     Link to article: What to Know About PREVENT, the AHA's New Cardiovascular Disease Risk Calculator
 </a>
 
-<div id="results">Loading...</div>
+<div id="results">Loading risk data...</div>
+
+<div id="ptdata">Loading patient data...</div>
 
 <script>
 // Helper to get URL parameter
@@ -78,8 +95,8 @@ function formatRiskBlock(title, data) {
     `;
 }
 
+// Show Risk JSON (riskjson)
 const riskJsonParam = getURLParameter('riskjson');
-
 if (riskJsonParam) {
     try {
         const decodedJson = decodeURIComponent(riskJsonParam);
@@ -101,6 +118,41 @@ if (riskJsonParam) {
 } else {
     document.getElementById('results').textContent = 'No riskjson parameter found in URL.';
 }
+
+// Show Patient JSON (ptjson)
+const ptJsonParam = getURLParameter('ptjson');
+if (ptJsonParam) {
+    try {
+        const decodedPtJson = decodeURIComponent(ptJsonParam);
+        const ptJson = JSON.parse(decodedPtJson);
+
+        let tableHtml = `
+            <h2>Patient Data</h2>
+            <table>
+                <thead>
+                    <tr><th>Field</th><th>Value</th></tr>
+                </thead>
+                <tbody>
+        `;
+
+        for (const key in ptJson) {
+            tableHtml += `<tr><td>${key}</td><td>${ptJson[key] !== null ? ptJson[key] : 'None'}</td></tr>`;
+        }
+
+        tableHtml += `
+                </tbody>
+            </table>
+        `;
+
+        document.getElementById('ptdata').innerHTML = tableHtml;
+
+    } catch (e) {
+        document.getElementById('ptdata').textContent = 'Invalid ptjson data.';
+    }
+} else {
+    document.getElementById('ptdata').textContent = 'No ptjson parameter found in URL.';
+}
+
 </script>
 
 </body>
