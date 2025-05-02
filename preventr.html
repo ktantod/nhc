@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Risk JSON Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        pre {
+            background-color: #fff;
+            padding: 15px;
+            border: 1px solid #ccc;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Risk JSON Viewer</h1>
+<pre id="jsonDisplay">Loading...</pre>
+
+<script>
+// Function to get URL parameter
+function getURLParameter(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name);
+}
+
+// Get 'riskjson' parameter
+const riskJsonParam = getURLParameter('riskjson');
+
+if (riskJsonParam) {
+    try {
+        // Decode and parse the JSON
+        const decodedJson = decodeURIComponent(riskJsonParam);
+        const parsedJson = JSON.parse(decodedJson);
+
+        // Display formatted JSON
+        document.getElementById('jsonDisplay').textContent = JSON.stringify(parsedJson, null, 4);
+    } catch (e) {
+        document.getElementById('jsonDisplay').textContent = 'Invalid JSON data.';
+    }
+} else {
+    document.getElementById('jsonDisplay').textContent = 'No riskjson parameter found in URL.';
+}
+</script>
+
+</body>
+</html>
