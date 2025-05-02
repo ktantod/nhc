@@ -15,6 +15,14 @@
             font-size: 28px;
             margin-bottom: 10px;
         }
+        .disclaimer {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border: 1px solid #ffeeba;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
         a.article-link {
             display: inline-block;
             margin-bottom: 30px;
@@ -40,7 +48,8 @@
         table {
             background-color: #fff;
             border-collapse: collapse;
-            width: 100%;
+            width: 600px;
+            max-width: 100%;
             margin-top: 30px;
             box-shadow: 0 0 5px rgba(0,0,0,0.1);
         }
@@ -57,6 +66,10 @@
 <body>
 
 <h1>PREVENT Risk Calculator</h1>
+
+<div class="disclaimer">
+    <strong>Disclaimer:</strong> This calculator is for informational purposes only. At this time, NHC policies and treatment algorithms have not changed and do not use this risk calculation.
+</div>
 
 <a class="article-link" href="https://github.com/ktantod/nhc/blob/main/jama_larkin_2023_mn_230106_1705010847.6617.pdf" target="_blank">
     Link to article: What to Know About PREVENT, the AHA's New Cardiovascular Disease Risk Calculator
@@ -136,7 +149,7 @@ if (ptJsonParam) {
         `;
 
         for (const key in ptJson) {
-            tableHtml += `<tr><td>${key}</td><td>${ptJson[key] !== null ? ptJson[key] : 'None'}</td></tr>`;
+            tableHtml += `<tr><td><strong>${key}</strong></td><td>${ptJson[key] !== null ? ptJson[key] : 'None'}</td></tr>`;
         }
 
         tableHtml += `
