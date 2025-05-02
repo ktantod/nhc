@@ -2,54 +2,94 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Risk JSON Viewer</title>
+    <title>Risk Estimate Viewer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
             padding: 20px;
-            background-color: #f5f5f5;
+            line-height: 1.6;
         }
         h1 {
             font-size: 24px;
+            margin-bottom: 20px;
         }
-        pre {
+        .risk-block {
             background-color: #fff;
             padding: 15px;
-            border: 1px solid #ccc;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        .risk-block h2 {
+            margin-top: 0;
+        }
+        .risk-block ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .risk-block ul li {
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
 
-<h1>Risk JSON Viewer</h1>
-<pre id="jsonDisplay">Loading...</pre>
+<h1>Risk Estimate Results</h1>
+<div id="results">Loading...</div>
 
 <script>
-// Function to get URL parameter
+// Helper to get URL parameter
 function getURLParameter(name) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(name);
 }
 
-// Get 'riskjson' parameter
+function formatPercent(value) {
+    return (value * 100).toFixed(1) + '%';
+}
+
+function formatRiskBlock(title, data) {
+    return `
+        <div class="risk-block">
+            <h2>${title}</h2>
+            <ul>
+                <li><strong>Model:</strong> ${data.model}</li>
+                <li><strong>Input Problem:</strong> ${data.input_problem === null ? 'None' : data.input_problem}</li>
+                <li><strong>Total CVD Risk:</strong> ${formatPercent(data.total_cvd)}</li>
+                <li><strong>ASCVD Risk:</strong> ${formatPercent(data.ascvd)}</li>
+                <li><strong>Heart Failure Risk:</strong> ${formatPercent(data.heart_failure)}</li>
+                <li><strong>CHD Risk:</strong> ${formatPercent(data.chd)}</li>
+                <li><strong>Stroke Risk:</strong> ${formatPercent(data.stroke)}</li>
+                <li><strong>Over Years:</strong> ${data.over_years} years</li>
+            </ul>
+        </div>
+    `;
+}
+
 const riskJsonParam = getURLParameter('riskjson');
 
 if (riskJsonParam) {
     try {
-        // Decode and parse the JSON
         const decodedJson = decodeURIComponent(riskJsonParam);
         const parsedJson = JSON.parse(decodedJson);
 
-        // Display formatted JSON
-        document.getElementById('jsonDisplay').textContent = JSON.stringify(parsedJson, null, 4);
+        let html = '';
+        if (parsedJson.risk_est_10yr) {
+            html += formatRiskBlock('10 Year Risk Estimate', parsedJson.risk_est_10yr);
+        }
+        if (parsedJson.risk_est_30yr) {
+            html += formatRiskBlock('30 Year Risk Estimate', parsedJson.risk_est_30yr);
+        }
+
+        document.getElementById('results').innerHTML = html;
+
     } catch (e) {
-        document.getElementById('jsonDisplay').textContent = 'Invalid JSON data.';
+        document.getElementById('results').textContent = 'Invalid JSON data.';
     }
 } else {
-    document.getElementById('jsonDisplay').textContent = 'No riskjson parameter found in URL.';
+    document.getElementById('results').textContent = 'No riskjson parameter found in URL.';
 }
 </script>
 
