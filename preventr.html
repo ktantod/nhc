@@ -125,7 +125,7 @@ function formatRiskBlock(title, data, highlightASCVD = false) {
             <h2>${title}</h2>
             <ul>
                 <li><strong>Model:</strong> ${data.model}</li>
-                <li><strong>Input Problem:</strong> ${data.input_problem === null ? 'None' : data.input_problem}</li>
+                <li><strong>Input Problem:</strong> ${data.input_problems === null ? 'None' : data.input_problems}</li>
                 <li><strong>Total CVD Risk:</strong> ${formatPercent(data.total_cvd)}</li>
                 <li><strong>ASCVD Risk:</strong> <span class="${ascvdHighlightClass}">${formatPercent(data.ascvd)}</span></li>
                 <li><strong>Heart Failure Risk:</strong> ${formatPercent(data.heart_failure)}</li>
@@ -141,7 +141,7 @@ function formatRiskBlock(title, data, highlightASCVD = false) {
             <h2>${title}</h2>
             <ul>
                 <li><strong>Model:</strong> ${data.model}</li>
-                <li><strong>Input Problem:</strong> ${data.input_problem === null ? 'None' : data.input_problem}</li>
+                <li><strong>Input Problem:</strong> ${data.input_problems === null ? 'None' : data.input_problems}</li>
                 <li><strong>Total CVD Risk:</strong> ${formatPercent(data.total_cvd)}</li>
                 <li${ascvdHighlightLineClass}><strong>ASCVD Risk:</strong> ${formatPercent(data.ascvd)}</li>
                 <li><strong>Heart Failure Risk:</strong> ${formatPercent(data.heart_failure)}</li>
