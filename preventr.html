@@ -44,7 +44,25 @@
         }
         .risk-block ul li {
             margin-bottom: 5px;
+            padding: 3px 0; /* Add some padding for highlight */
         }
+        /* Style for highlighting */
+        .highlight-ascvd {
+            background-color: #ffffcc; /* Light yellow background */
+            font-weight: bold; /* Make text bold */
+            padding-left: 5px; /* Add a little space inside */
+            padding-right: 5px;
+            border-radius: 3px; /* Slightly rounded corners */
+            display: inline-block; /* Keep highlight tight to content if needed, or remove for full line */
+        }
+        /* Alternatively, to highlight the whole line: */
+        /*
+        li.highlight-ascvd-line {
+            background-color: #ffffcc;
+            border-left: 3px solid #ffeb3b;
+            padding-left: 5px;
+        }
+        */
         table {
             background-color: #fff;
             border-collapse: collapse;
@@ -95,7 +113,13 @@ function formatPercent(value) {
     return (value * 100).toFixed(1) + '%';
 }
 
-function formatRiskBlock(title, data) {
+// Modified function to accept a flag for highlighting ASCVD
+function formatRiskBlock(title, data, highlightASCVD = false) {
+    // Decide which class to add to the ASCVD list item
+    const ascvdHighlightClass = highlightASCVD ? 'highlight-ascvd' : '';
+    // Optional: Use this class if you want to highlight the whole line instead
+    // const ascvdHighlightLineClass = highlightASCVD ? ' class="highlight-ascvd-line"' : '';
+
     return `
         <div class="risk-block">
             <h2>${title}</h2>
@@ -103,7 +127,7 @@ function formatRiskBlock(title, data) {
                 <li><strong>Model:</strong> ${data.model}</li>
                 <li><strong>Input Problem:</strong> ${data.input_problem === null ? 'None' : data.input_problem}</li>
                 <li><strong>Total CVD Risk:</strong> ${formatPercent(data.total_cvd)}</li>
-                <li><strong>ASCVD Risk:</strong> ${formatPercent(data.ascvd)}</li>
+                <li><strong>ASCVD Risk:</strong> <span class="${ascvdHighlightClass}">${formatPercent(data.ascvd)}</span></li>
                 <li><strong>Heart Failure Risk:</strong> ${formatPercent(data.heart_failure)}</li>
                 <li><strong>CHD Risk:</strong> ${formatPercent(data.chd)}</li>
                 <li><strong>Stroke Risk:</strong> ${formatPercent(data.stroke)}</li>
@@ -111,6 +135,22 @@ function formatRiskBlock(title, data) {
             </ul>
         </div>
     `;
+    /* Alternative using the line highlight class:
+    return `
+        <div class="risk-block">
+            <h2>${title}</h2>
+            <ul>
+                <li><strong>Model:</strong> ${data.model}</li>
+                <li><strong>Input Problem:</strong> ${data.input_problem === null ? 'None' : data.input_problem}</li>
+                <li><strong>Total CVD Risk:</strong> ${formatPercent(data.total_cvd)}</li>
+                <li${ascvdHighlightLineClass}><strong>ASCVD Risk:</strong> ${formatPercent(data.ascvd)}</li>
+                <li><strong>Heart Failure Risk:</strong> ${formatPercent(data.heart_failure)}</li>
+                <li><strong>CHD Risk:</strong> ${formatPercent(data.chd)}</li>
+                <li><strong>Stroke Risk:</strong> ${formatPercent(data.stroke)}</li>
+                <li><strong>Over Years:</strong> ${data.over_years} years</li>
+            </ul>
+        </div>
+    `; */
 }
 
 // Show Risk JSON (riskjson)
@@ -122,15 +162,18 @@ if (riskJsonParam) {
 
         let html = '';
         if (parsedJson.risk_est_10yr) {
-            html += formatRiskBlock('10 Year Risk Estimate', parsedJson.risk_est_10yr);
+            // Pass true as the third argument to highlight ASCVD for 10yr
+            html += formatRiskBlock('10 Year Risk Estimate', parsedJson.risk_est_10yr, true);
         }
         if (parsedJson.risk_est_30yr) {
+            // Pass false (or omit) for 30yr - ASCVD will not be highlighted
             html += formatRiskBlock('30 Year Risk Estimate', parsedJson.risk_est_30yr);
         }
 
         document.getElementById('results').innerHTML = html;
 
     } catch (e) {
+        console.error("Error parsing risk JSON:", e); // Log error for debugging
         document.getElementById('results').textContent = 'Invalid JSON data.';
     }
 } else {
@@ -153,7 +196,10 @@ if (ptJsonParam) {
                 <tbody>
         `;
 
-        for (const key in ptJson) {
+        // Sort keys alphabetically for consistent order, optional
+        const sortedKeys = Object.keys(ptJson).sort();
+
+        for (const key of sortedKeys) {
             tableHtml += `<tr><td><strong>${key}</strong></td><td>${ptJson[key] !== null ? ptJson[key] : 'None'}</td></tr>`;
         }
 
@@ -165,6 +211,7 @@ if (ptJsonParam) {
         document.getElementById('ptdata').innerHTML = tableHtml;
 
     } catch (e) {
+        console.error("Error parsing patient JSON:", e); // Log error for debugging
         document.getElementById('ptdata').textContent = 'Invalid ptjson data.';
     }
 } else {
